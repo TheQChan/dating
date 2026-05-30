@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   build:
+    environment:
+      name: github-pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,6 +33,14 @@ jobs:
           cp config.template.js config.js
           sed -i "s|__TELEGRAM_BOT_TOKEN__|${{ secrets.TELEGRAM_BOT_TOKEN }}|g" config.js
           sed -i "s|__TELEGRAM_CHAT_ID__|${{ secrets.TELEGRAM_CHAT_ID }}|g" config.js
+
+      - name: Validate runtime config
+        shell: bash
+        run: |
+          if grep -q "__TELEGRAM_BOT_TOKEN__" config.js || grep -q "__TELEGRAM_CHAT_ID__" config.js; then
+            echo "GitHub secrets were not injected into config.js"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
