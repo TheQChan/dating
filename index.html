@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Идём на свидание?</title>
+  <meta
+    name="description"
+    content="Весёлый сайт про организацию свидания с шутками, анимациями и отправкой анкеты в Telegram."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Rubik+Moonrocks&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  >
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="background">
+    <div class="blob blob--one"></div>
+    <div class="blob blob--two"></div>
+    <div class="blob blob--three"></div>
+    <div class="stars"></div>
+  </div>
+
+  <main class="app-shell">
+    <section class="card" id="app">
+      <div class="card__header">
+        <span class="badge" id="stepBadge">Шаг 1 из 6</span>
+        <span class="badge badge--ghost" id="statusBadge">Date runtime: stable build</span>
+      </div>
+
+      <div class="progress" aria-hidden="true">
+        <div class="progress__bar" id="progressBar"></div>
+      </div>
+
+      <div class="scene scene--active" data-scene="intro">
+        <div class="hero">
+          <div class="hero__text">
+            <p class="eyebrow">Экстренное сообщение</p>
+            <h1>Идём на свидание?</h1>
+            <p class="lead">
+              Внимание: кнопка <strong>«Нет»</strong> страдает от приступов застенчивости и потому убегает.
+              Это не баг, это защита от неправильных жизненных решений.
+            </p>
+          </div>
+          <div class="hero__visual">
+            <img src="./assets/coffee-date.svg" alt="Иллюстрация свидания с кофе" class="hero__image">
+            <div class="sticker">
+              <span>date.js</span>
+              <small>compiled successfully</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="intro-actions" id="introActions">
+          <button class="btn btn--primary" id="yesButton" type="button">Да, конечно</button>
+          <button class="btn btn--ghost btn--runaway" id="noButton" type="button">Нет</button>
+        </div>
+
+        <p class="tiny-note" id="runawayNote">Подсказка: эта кнопка не готова к отказам.</p>
+
+        <div class="playful-panel">
+          <div class="playful-panel__header">
+            <span>date-compiler</span>
+            <button class="mini-btn" type="button" id="compileButton">Запустить</button>
+          </div>
+          <div class="playful-panel__body">
+            <div class="mini-progress" aria-hidden="true">
+              <div class="mini-progress__bar" id="compileBar"></div>
+            </div>
+            <p class="playful-panel__log" id="compileLog">Сборка плана ожидает запуска. Ошибок пока нет, но есть интрига.</p>
+          </div>
+        </div>
+      </div>
+
+      <form class="scene" data-scene="form" id="dateForm">
+        <section class="question question--active" data-question="0">
+          <p class="eyebrow">Разогрев</p>
+          <h2>Какой формат свидания тебе ближе?</h2>
+          <div class="choice-grid">
+            <label class="choice-card">
+              <input type="radio" name="dateStyle" value="На вайбе: колу без сахара, kfc и разговоры" required>
+              <span>На вайбе: колу без сахара, kfc и разговоры</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="dateStyle" value="Активно: прогулка, парк, движ и мемы">
+              <span>Активно: прогулка, парк, движ и мемы</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="dateStyle" value="Кино плюс обсуждение как два суровых кинокритика">
+              <span>Кино + обсуждение как два суровых кинокритика</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="dateStyle" value="Без разницы, главное вместе и с хорошим настроением">
+              <span>Без разницы, главное вместе и с хорошим настроением</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="question" data-question="1">
+          <p class="eyebrow">Логистика</p>
+          <h2>Когда удобно увидеться?</h2>
+          <div class="field-grid">
+            <label class="field">
+              <span>Дата</span>
+              <input type="date" name="date" id="dateInput" required>
+            </label>
+            <label class="field">
+              <span>Время</span>
+              <input type="time" name="time" id="timeInput" required>
+            </label>
+          </div>
+          <p class="tip">Календарь не осуждает. Он просто фиксирует дедлайны этого плана.</p>
+        </section>
+
+        <section class="question" data-question="2">
+          <p class="eyebrow">Точка сбора</p>
+          <h2>Куда идём?</h2>
+          <div class="choice-grid">
+            <label class="choice-card">
+              <input type="radio" name="place" value="Кофейня с атмосферой и вкусным чем-нибудь" required>
+              <span>Кофейня с атмосферой и вкусным чем-нибудь</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="place" value="Парк или набережная для красивой прогулки">
+              <span>Парк или набережная для красивой прогулки</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="place" value="Кинотеатр с обязательным разбором сюжета после">
+              <span>Кинотеатр с обязательным разбором сюжета после</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="place" value="Что-то необычное, но без квеста на выживание">
+              <span>Что-то необычное, но без квеста на выживание</span>
+            </label>
+          </div>
+          <div class="map-picker">
+            <div class="map-picker__summary">
+              <strong>Нужна конкретика?</strong>
+              <p id="mapSummary">Можно выбрать точное место для начальной встречи или просто, где побывать.</p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="openMapButton">Выбрать конкретное место</button>
+          </div>
+        </section>
+
+        <section class="question" data-question="3">
+          <p class="eyebrow">Контроль качества</p>
+          <h2>Что точно нужно взять с собой?</h2>
+          <div class="choice-grid choice-grid--small">
+            <label class="choice-card choice-card--checkbox">
+              <input type="checkbox" name="mustHave" value="Хорошее настроение">
+              <span>Хорошее настроение</span>
+            </label>
+            <label class="choice-card choice-card--checkbox">
+              <input type="checkbox" name="mustHave" value="Тупые шутки и рюкзак">
+              <span>Тупые шутки и рюкзак</span>
+            </label>
+            <label class="choice-card choice-card--checkbox">
+              <input type="checkbox" name="mustHave" value="Готовность выбирать бургер kfc долго и вдумчиво">
+              <span>Готовность выбирать бургер kfc долго и вдумчиво</span>
+            </label>
+            <label class="choice-card choice-card--checkbox">
+              <input type="checkbox" name="mustHave" value="Банковскую карточку">
+              <span>Банковскую карточку</span>
+            </label>
+          </div>
+          <p class="tip">Можно выбрать несколько пунктов. Это не капча, это чеклист счастья.</p>
+        </section>
+
+        <section class="question" data-question="4">
+          <p class="eyebrow">Бонусный пакет</p>
+          <h2>Какой вайб включаем?</h2>
+          <div class="choice-grid">
+            <label class="choice-card">
+              <input type="radio" name="vibe" value="Спокойный и уютный" required>
+              <span>Спокойный и уютный</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="vibe" value="Смешной и слегка хаотичный">
+              <span>Смешной и слегка хаотичный</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="vibe" value="Эстетичный, будто мы на постере ромкома">
+              <span>Эстетичный, будто мы на постере ромкома</span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="vibe" value="Микс всего, потому что почему бы и нет">
+              <span>Микс всего, потому что почему бы и нет</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="question" data-question="5">
+          <p class="eyebrow">Финальный коммит</p>
+          <h2>Пара последних деталей</h2>
+          <div class="field-grid field-grid--stacked">
+            <div class="captcha-card">
+              <div class="captcha-card__text">
+                <span class="captcha-card__label">Проверка намерений</span>
+                <strong>Подтверди, что ты готова пойти на свидание и хорошо его провести.</strong>
+              </div>
+              <button class="captcha-box" type="button" id="captchaToggle" aria-pressed="false">
+                <span class="captcha-box__check" id="captchaCheck">
+                  <span class="captcha-box__spinner"></span>
+                  <span class="captcha-box__mark">✓</span>
+                </span>
+                <span class="captcha-box__text" id="captchaText">Я готова пойти на свидание и провести его как минимум хорошо</span>
+                <span class="captcha-box__badge">anti-boring v2</span>
+              </button>
+            </div>
+            <label class="field">
+              <span>Комментарий или пожелание</span>
+              <textarea
+                name="comment"
+                rows="4"
+                maxlength="300"
+                placeholder="Например: хочу что-то милое, вкусное и без танцевального баттла"
+              ></textarea>
+            </label>
+          </div>
+          <div class="final-joke">
+            <span>npm run date</span>
+            <small>Скрипт готов к исполнению без ошибок планировщика.</small>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button class="btn btn--ghost" type="button" id="backButton">Назад</button>
+          <button class="btn btn--primary" type="button" id="nextButton">Дальше</button>
+          <button class="btn btn--primary hidden" type="submit" id="submitButton">Отправить анкету</button>
+        </div>
+      </form>
+
+      <section class="scene" data-scene="success" id="successScene">
+        <h2>Готово</h2>
+        <div class="success-box">
+          <img src="./assets/celebration.svg" alt="Праздничная открытка" class="success-box__image">
+          <div>
+            <p id="successMessage">Твои пожелания уже получены. Подготовка к свиданию пошла без права на откат.</p>
+            <button class="btn btn--ghost" type="button" id="restartButton">Пройти ещё раз</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="toast" id="toast" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div class="map-modal hidden" id="mapModal" aria-hidden="true">
+    <div class="map-modal__backdrop" id="mapBackdrop"></div>
+    <div class="map-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+      <div class="map-modal__header">
+        <div>
+          <p class="eyebrow">Выбор точки</p>
+          <h2 id="mapTitle">Поставь место на карте</h2>
+        </div>
+        <button class="map-modal__close" type="button" id="closeMapButton" aria-label="Закрыть">×</button>
+      </div>
+      <p class="map-modal__hint">Можно кликнуть на карту или найти место по названию.</p>
+      <div class="map-modal__search">
+        <input type="text" id="mapSearchInput" placeholder="Например: Патриаршие пруды, Москва">
+        <button class="btn btn--ghost" type="button" id="searchMapButton">Найти</button>
+      </div>
+      <div class="map-modal__canvas" id="mapCanvas"></div>
+      <div class="map-modal__footer">
+        <p id="mapResult">Точка ещё не выбрана.</p>
+        <button class="btn btn--primary" type="button" id="confirmMapButton">Сохранить точку</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="./script.js"></script>
+</body>
+</html>
